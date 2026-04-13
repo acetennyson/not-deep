@@ -8,27 +8,32 @@ A DEV April Fools Challenge submission. An endless runner where you control a te
 
 You run. You jump. You die. The AI analyzes your failure and adjusts the physics to be slightly more insulting next time. There is no finish line. There never was.
 
-Built with Next.js, Phaser 3, Gemini API, and Firebase — because some problems deserve enterprise-grade infrastructure.
+Built with Next.js, Phaser 3, Gemini API, Groq, and Firebase — because some problems deserve enterprise-grade infrastructure.
 
 ## Features
 
-- **Endless Runner** — teapot rolls across a procedurally generated course, one button (space) to jump
-- **Gemini Vibe Check** — on every death, player action data is sent to `/api/judge`. Gemini decides how to punish you next run (gravity, speed, jump force, input delay)
-- **Input Gaslighting** — every ~Nth jump introduces a silent 200ms delay. Wall contact degrades grip permanently. Key mashing drops gravity to 0.1 and the teapot floats away
-- **Global Loss Leaderboard** — tracks deaths, not wins. Powered by Firebase. "You are ranked #3 most pathetic globally."
-- **AI Death Roasts** — Gemini generates a personalized roast on each death screen based on your playstyle. Gets meaner over time
+- **Endless Runner** — teapot rolls across a procedurally generated course, one button to jump (but not always that button)
+- **Rotating Controls** — the jump key silently changes every run. The HUD shows last run's key. The `/controls` page is wrong. This is documented nowhere.
+- **Gemini Vibe Check** — on every death, player action data is sent to `/api/judge`. Gemini (with Groq/Llama fallback) decides how to punish you next run (gravity, speed, jump force, mass, drag, input delay) and generates a personalized roast
+- **Noise-Driven Physics** — speed and gravity drift organically using smooth noise. Nothing is constant. Nothing is predictable.
+- **Chaos Events** — mid-run surprises: gravity spikes (2.2x for 800ms), speed bursts (1.8x for 2s), growing obstacles (get taller as they approach), reversing obstacles (briefly move toward you), phantom obstacles (visible but no hitbox — wastes your double jump)
+- **Input Gaslighting** — every ~Nth jump introduces a silent 200ms delay. Wall contact degrades grip permanently. Key mashing drops gravity to near zero and the teapot floats away
+- **Double Jump + Slam** — jump again mid-air for a second jump at 80% force. Press slam key to drive down fast. Both keys rotate with the jump key.
+- **Global Loss Leaderboard** — tracks deaths, not wins. Powered by Firebase. "You are ranked #3 most pathetic globally." Persists across refreshes.
+- **AI Death Roasts** — Gemini/Groq generates a personalized roast on each death screen based on your exact stats. Gets meaner over time.
 - **Fake Patch Notes** — a changelog modal with notes like "Fixed bug where player could win (unintended)" and "Removed finish line (was causing confusion)"
 - **Fake Loading Tips** — instant loading screens between runs with tips like "Tip: There is no finish line. There never was."
-- **Broken Controls Page** — `/controls` documents the controls incorrectly. The real jump key rotates. Never acknowledged
+- **Broken Controls Page** — `/controls` documents the controls incorrectly. The real jump key rotates. Never acknowledged.
 - **Support Ticket System** — after 5 deaths a "Report a Bug" button appears. Submit a complaint, receive a 418 and a Gemini-generated gaslighting response
-- **Share Your Shame** — one-click generates a pre-written tweet with your death count and your AI roast
+- **Share Your Shame** — one-click opens a share modal with X, Facebook, WhatsApp, Telegram, Reddit, LinkedIn, and clipboard
 - **418 Redirect** — survive 90 seconds and get redirected to `/418`: `{"status": 418, "message": "I'm a Teapot", "reason": "Server is currently brewing. Your victory has been lost in transit."}`
 
 ## Stack
 
-- **Next.js** — frontend + API routes
-- **Phaser 3** — game engine (canvas, physics)
-- **Gemini API** — passive-aggressive game designer
+- **Next.js 16** — frontend + API routes
+- **Phaser 3** — game engine (canvas, physics, chaos)
+- **Gemini 1.5 Flash** — primary AI (roasts + physics modifiers)
+- **Groq / Llama 3.3 70B** — fallback AI when Gemini quota is exceeded
 - **Firebase Firestore** — global loss leaderboard
 - **Google Cloud Run** — deployment target
 
@@ -39,7 +44,7 @@ Built with Next.js, Phaser 3, Gemini API, and Firebase — because some problems
 | `/` | The game |
 | `/418` | You almost won. You didn't. |
 | `/controls` | Misleading control reference |
-| `/api/judge` | Receives death data, returns physics modifiers from Gemini |
+| `/api/judge` | Receives death data, returns physics modifiers + roast from Gemini/Groq |
 | `/api/support` | Accepts bug reports, returns 418 + AI gaslighting |
 
 ## Getting Started
@@ -53,9 +58,14 @@ Set up environment variables:
 
 ```env
 GEMINI_API_KEY=your_key
+GROQ_API_KEY=your_key
 NEXT_PUBLIC_FIREBASE_API_KEY=your_key
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project
 ```
+
+- Gemini key: [aistudio.google.com](https://aistudio.google.com)
+- Groq key (free): [console.groq.com](https://console.groq.com)
+- Firebase: [console.firebase.google.com](https://console.firebase.google.com)
 
 ## Deployment
 

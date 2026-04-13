@@ -9,14 +9,21 @@ const FALLBACK = "Thank you for your report. After careful review, we've determi
 export async function POST(req: NextRequest) {
   const { message, deaths } = await req.json();
 
-  const prompt = `You are a passive-aggressive customer support bot for a game that is designed to be unwinnable.
-A player has submitted a bug report after dying ${deaths} times. Their complaint: "${message}"
-Write a single short paragraph response that:
-- Acknowledges their complaint
-- Gaslights them into thinking it was their fault
-- Subtly implies the "bug" is a feature
-- Ends with a fake ticket number like [TICKET-418]
-Be polite but deeply unhelpful.`;
+  const prompt = `You are a support agent for an intentionally unwinnable game. You think the player is an idiot but you're barely hiding it.
+
+Player died ${deaths} times. Their complaint: "${message}"
+
+Write ONE short paragraph (3-4 sentences max). Rules:
+- First sentence: acknowledge the complaint in a way that immediately implies they caused it
+- Middle: gaslight them with something specific — e.g. "our logs show the jump registered correctly", "thousands of players complete this section daily", "this behavior is documented in the FAQ you didn't read"
+- Last sentence: something that sounds helpful but is actually a dismissal. End with [TICKET-418] marked as "Priority: Cosmetic".
+
+Examples of the RIGHT tone:
+- "After reviewing your session, our systems registered 47 successful jump inputs — all of which appear to have been timed incorrectly on your end."
+- "This is the first report of this nature in 6 months, which suggests the issue may be environmental. Have you tried being better?"
+- "We've escalated this to our physics team, who have confirmed that gravity is, in fact, working correctly. [TICKET-418] Priority: Cosmetic."
+
+Do NOT use corporate phrases like "we appreciate your feedback", "we're sorry to hear", or "thank you for reaching out". Be direct, condescending, and specific to their complaint.`;
 
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });

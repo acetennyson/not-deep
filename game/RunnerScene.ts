@@ -242,6 +242,7 @@ export class RunnerScene extends Phaser.Scene {
       jumps: this.jumpCount,
       wallHugs: Math.floor(this.wallHugMs / 1000),
       keyMashCount: this.keyMashCount,
+      survivedMs: this.survivalMs,
     });
     this.scene.pause();
   }

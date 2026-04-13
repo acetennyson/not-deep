@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import type { PhysicsConfig } from "../lib/types";
 import { DEFAULT_PHYSICS } from "../lib/types";
 import { judgePlayer, submitBugReport } from "../lib/api";
-import { recordDeath } from "../lib/leaderboard";
+import { updateSession, saveMatch } from "../lib/leaderboard";
 import { LOADING_TIPS, PATCH_NOTES } from "./constants";
 import { ShareModal } from "./ShareModal";
 import { getJumpKeyName, getSlamKeyName } from "../lib/controls";
@@ -23,6 +23,13 @@ function getSavedDeaths() {
 function saveDeaths(n: number) {
   localStorage.setItem("teapot_deaths", String(n));
 }
+function getSavedSurvivedMs() {
+  if (typeof window === "undefined") return 0;
+  return parseInt(localStorage.getItem("teapot_survived_ms") ?? "0", 10);
+}
+function saveSurvivedMs(n: number) {
+  localStorage.setItem("teapot_survived_ms", String(n));
+}
 
 type Screen = "start" | "loading" | "playing" | "dead" | "support";
 
@@ -40,6 +47,7 @@ export default function Game() {
       setDeaths(saved);
       deathsRef.current = saved;
     }
+    totalSurvivedMsRef.current = getSavedSurvivedMs();
   }, []);
   const [roast, setRoast] = useState("");
   const [rank, setRank] = useState(0);
@@ -51,6 +59,7 @@ export default function Game() {
   const [supportLoading, setSupportLoading] = useState(false);
   const physicsRef = useRef<PhysicsConfig>({ ...DEFAULT_PHYSICS });
   const runIndexRef = useRef(0);
+  const totalSurvivedMsRef = useRef(0);
   const onEventRef = useRef<(event: string, data?: unknown) => void>(() => {});
 
   const startRun = useCallback(async (physics: PhysicsConfig) => {
@@ -65,16 +74,32 @@ export default function Game() {
   useEffect(() => {
     onEventRef.current = async (event: string, data?: unknown) => {
       if (event === "win") { window.location.href = "/418"; return; }
-      const d = data as { jumps?: number; wallHugs?: number; keyMashCount?: number } | undefined;
+      const d = data as { jumps?: number; wallHugs?: number; keyMashCount?: number; survivedMs?: number } | undefined;
       const newDeaths = deathsRef.current + 1;
       deathsRef.current = newDeaths;
       saveDeaths(newDeaths);
       runIndexRef.current += 1;
+      const survivedMs = d?.survivedMs ?? 0;
+      totalSurvivedMsRef.current += survivedMs;
+      saveSurvivedMs(totalSurvivedMsRef.current);
       setDeaths(newDeaths);
+
       const [judgeRes, playerRank] = await Promise.all([
         judgePlayer({ deaths: newDeaths, avgJumps: d?.jumps ?? 0, wallHugs: d?.wallHugs ?? 0, keyMashCount: d?.keyMashCount ?? 0 }),
-        recordDeath(SESSION_ID, newDeaths),
+        updateSession(SESSION_ID, newDeaths, totalSurvivedMsRef.current),
       ]);
+
+      saveMatch({
+        matchNumber: newDeaths,
+        survivedMs,
+        jumps: d?.jumps ?? 0,
+        wallHugs: d?.wallHugs ?? 0,
+        keyMashes: d?.keyMashCount ?? 0,
+        physicsApplied: judgeRes.physics,
+        roast: judgeRes.roast,
+        timestamp: Date.now(),
+      });
+
       physicsRef.current = judgeRes.physics;
       setRoast(judgeRes.roast);
       setRank(playerRank);
