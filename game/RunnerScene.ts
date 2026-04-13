@@ -11,6 +11,7 @@ const TEAPOT_R = 22;
 const TEAPOT_X = 120;
 
 // Jump key rotates each run: Space → Up → S → Down → repeat
+// Starts at index 1 so run 1's real key is UP, but HUD shows SPACE (index 0)
 const JUMP_KEY_ROTATION = [
   Phaser.Input.Keyboard.KeyCodes.SPACE,
   Phaser.Input.Keyboard.KeyCodes.UP,
@@ -106,7 +107,8 @@ export class RunnerScene extends Phaser.Scene {
   }
 
   private bindKeys() {
-    const jumpKeyCode = JUMP_KEY_ROTATION[this.runIndex % JUMP_KEY_ROTATION.length];
+    // offset by 1: HUD shows index N, actual key is index N+1
+    const jumpKeyCode = JUMP_KEY_ROTATION[(this.runIndex + 1) % JUMP_KEY_ROTATION.length];
     const slamKeyCode = jumpKeyCode === Phaser.Input.Keyboard.KeyCodes.DOWN
       ? Phaser.Input.Keyboard.KeyCodes.SPACE
       : Phaser.Input.Keyboard.KeyCodes.DOWN;

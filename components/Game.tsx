@@ -204,8 +204,8 @@ export default function Game() {
     <div className="flex flex-col items-center justify-center h-screen">
       <div className="mb-2 flex gap-6 text-sm text-zinc-500">
         <span>Deaths: <span className="text-white">{deaths}</span></span>
-        <span>Jump: <span className="text-amber-400 font-mono">{getJumpKeyName(runIndexRef.current - 1)}</span></span>
-        <span>Slam: <span className="text-amber-400 font-mono">{getSlamKeyName(runIndexRef.current - 1)}</span></span>
+        <span>Jump: <span className="text-amber-400 font-mono">{getJumpKeyName(Math.max(0, runIndexRef.current - 1))}</span></span>
+        <span>Slam: <span className="text-amber-400 font-mono">{getSlamKeyName(Math.max(0, runIndexRef.current - 1))}</span></span>
       </div>
       <div ref={containerRef} className="rounded-lg overflow-hidden border border-zinc-800" />
     </div>
