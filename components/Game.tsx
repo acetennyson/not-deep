@@ -150,9 +150,20 @@ export default function Game() {
     setSupportLoading(false);
   };
 
-  if (screen === "start") return (
+  if (screen === "start") {
+    const handleStart = () => {
+      const btn = document.getElementById("start-btn");
+      const overlay = document.getElementById("void-overlay");
+      if (btn) btn.classList.add("zoom-into-void");
+      if (overlay) overlay.classList.add("fade-to-black");
+      setTimeout(() => startRun(DEFAULT_PHYSICS), 650);
+    };
+
+    return (
     <div className="relative flex flex-col items-center justify-center h-screen gap-8 text-center px-4 overflow-hidden bg-black">
       <GameAmbience />
+      {/* void overlay — covers screen during transition */}
+      <div id="void-overlay" className="fixed inset-0 bg-black pointer-events-none z-50 opacity-0" />
       {/* atmospheric background */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#1a0a2e_0%,_#000_70%)]" />
       <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(255,255,255,0.015)_2px,rgba(255,255,255,0.015)_4px)]" />
@@ -170,10 +181,11 @@ export default function Game() {
           <span className="text-red-900/70 font-black tracking-widest uppercase text-xs drop-shadow-[0_0_8px_rgba(220,38,38,0.6)] animate-pulse" style={{fontFamily:"'Creepster', cursive", fontSize:"1.1rem", letterSpacing:"0.15em"}}>You will not be different.</span>
         </p>
         <button
-          onClick={() => startRun(DEFAULT_PHYSICS)}
-          className="mt-2 px-10 py-3 bg-amber-500 hover:bg-amber-400 active:scale-95 text-black font-black text-lg rounded-none tracking-widest uppercase transition-all shadow-[0_0_30px_rgba(251,191,36,0.3)] hover:shadow-[0_0_40px_rgba(251,191,36,0.5)]"
+          id="start-btn"
+          onClick={handleStart}
+          className="btn-scary mt-2 px-10 py-4 bg-transparent border-2 border-red-700 text-red-500 text-2xl rounded-none tracking-widest uppercase transition-all hover:bg-red-950/30"
         >
-          Start Losing
+          <span>Start Losing</span>
         </button>
         <button onClick={() => setShowPatchNotes(true)} className="text-xs text-zinc-700 hover:text-zinc-500 tracking-widest uppercase">
           v2.4.1 patch notes
@@ -181,7 +193,7 @@ export default function Game() {
       </div>
       {showPatchNotes && <PatchNotesModal onClose={() => setShowPatchNotes(false)} />}
     </div>
-  );
+  );}
 
   if (screen === "loading") return (
     <div className="relative flex flex-col items-center justify-center h-screen gap-6 text-center px-4 bg-black overflow-hidden">

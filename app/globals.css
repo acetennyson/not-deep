@@ -24,3 +24,34 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@keyframes zoomIntoVoid {
+  0%   { transform: scale(1);  opacity: 1; }
+  60%  { transform: scale(8);  opacity: 0.8; }
+  100% { transform: scale(20); opacity: 0; }
+}
+
+@keyframes fadeToBlack {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; text-shadow: 0 0 10px #ff3300, 0 0 20px #ff3300, 0 0 40px #ff0000; }
+  10%  { opacity: 0.85; }
+  20%  { opacity: 1; text-shadow: 0 0 5px #ff3300; }
+  50%  { opacity: 0.9; text-shadow: 0 0 15px #ff3300, 0 0 30px #ff0000, 0 0 60px #cc0000; }
+  75%  { opacity: 0.7; text-shadow: none; }
+  80%  { opacity: 1; }
+}
+
+@keyframes borderPulse {
+  0%, 100% { box-shadow: 0 0 8px #ff2200, 0 0 20px #ff000066, inset 0 0 8px #ff220022; }
+  50%       { box-shadow: 0 0 20px #ff2200, 0 0 50px #ff0000aa, inset 0 0 15px #ff220044; }
+}
+
+.zoom-into-void { animation: zoomIntoVoid 0.6s ease-in forwards; }
+.fade-to-black  { animation: fadeToBlack 0.4s ease-in 0.3s forwards; opacity: 0; }
+
+.btn-scary { font-family: 'Creepster', cursive; animation: borderPulse 2s ease-in-out infinite; }
+.btn-scary span { animation: flicker 3s infinite; }
