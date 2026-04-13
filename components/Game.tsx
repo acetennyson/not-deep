@@ -7,6 +7,7 @@ import { updateSession, saveMatch } from "../lib/leaderboard";
 import { LOADING_TIPS, PATCH_NOTES } from "./constants";
 import { ShareModal } from "./ShareModal";
 import { getJumpKeyName, getSlamKeyName } from "../lib/controls";
+import { GameAmbience } from "./GameAmbience";
 
 const SESSION_ID = typeof window !== "undefined"
   ? (localStorage.getItem("teapot_session") ?? (() => {
@@ -150,84 +151,145 @@ export default function Game() {
   };
 
   if (screen === "start") return (
-    <div className="flex flex-col items-center justify-center h-screen gap-6 text-center px-4">
-      <h1 className="text-4xl font-bold text-amber-400">☕ 418: I&apos;m a Teapot</h1>
-      <p className="text-zinc-400 max-w-md">A high-performance, AI-integrated gaming platform built solely to ensure you never win.</p>
-      <button onClick={() => startRun(DEFAULT_PHYSICS)} className="px-8 py-3 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-lg transition-colors">
-        Start Losing
-      </button>
-      <button onClick={() => setShowPatchNotes(true)} className="text-xs text-zinc-600 hover:text-zinc-400 underline">v2.4.1 patch notes</button>
+    <div className="relative flex flex-col items-center justify-center h-screen gap-8 text-center px-4 overflow-hidden bg-black">
+      <GameAmbience />
+      {/* atmospheric background */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#1a0a2e_0%,_#000_70%)]" />
+      <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(255,255,255,0.015)_2px,rgba(255,255,255,0.015)_4px)]" />
+
+      <div className="relative z-10 flex flex-col items-center gap-6">
+        <div className="text-7xl mb-2 drop-shadow-[0_0_30px_rgba(251,191,36,0.4)]">☕</div>
+        <div>
+          <h1 className="text-5xl font-black tracking-tight text-white drop-shadow-[0_0_20px_rgba(251,191,36,0.3)]">
+            418
+          </h1>
+          <p className="text-amber-400/80 text-sm tracking-[0.3em] uppercase mt-1">I&apos;m a Teapot</p>
+        </div>
+        <p className="text-zinc-500 max-w-sm text-sm leading-relaxed">
+          Everyone who has played this has lost.<br/>
+          <span className="text-red-900/70 font-black tracking-widest uppercase text-xs drop-shadow-[0_0_8px_rgba(220,38,38,0.6)] animate-pulse" style={{fontFamily:"'Creepster', cursive", fontSize:"1.1rem", letterSpacing:"0.15em"}}>You will not be different.</span>
+        </p>
+        <button
+          onClick={() => startRun(DEFAULT_PHYSICS)}
+          className="mt-2 px-10 py-3 bg-amber-500 hover:bg-amber-400 active:scale-95 text-black font-black text-lg rounded-none tracking-widest uppercase transition-all shadow-[0_0_30px_rgba(251,191,36,0.3)] hover:shadow-[0_0_40px_rgba(251,191,36,0.5)]"
+        >
+          Start Losing
+        </button>
+        <button onClick={() => setShowPatchNotes(true)} className="text-xs text-zinc-700 hover:text-zinc-500 tracking-widest uppercase">
+          v2.4.1 patch notes
+        </button>
+      </div>
       {showPatchNotes && <PatchNotesModal onClose={() => setShowPatchNotes(false)} />}
     </div>
   );
 
   if (screen === "loading") return (
-    <div className="flex flex-col items-center justify-center h-screen gap-4 text-center px-4">
-      <div className="text-4xl animate-spin">☕</div>
-      <p className="text-zinc-400 text-sm max-w-xs italic">{tip}</p>
+    <div className="relative flex flex-col items-center justify-center h-screen gap-6 text-center px-4 bg-black overflow-hidden">
+      <GameAmbience />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#1a0a2e_0%,_#000_70%)]" />
+      <div className="relative z-10 flex flex-col items-center gap-4">
+        <div className="text-5xl animate-spin drop-shadow-[0_0_20px_rgba(251,191,36,0.5)]">☕</div>
+        <p className="text-zinc-600 text-xs tracking-widest uppercase">Preparing your failure</p>
+        <p className="text-zinc-500 text-sm max-w-xs italic border border-zinc-800 px-4 py-3 bg-zinc-900/50">{tip}</p>
+      </div>
     </div>
   );
 
   if (screen === "dead") return (
-    <div className="flex flex-col items-center justify-center h-screen gap-4 text-center px-4">
-      <h2 className="text-3xl font-bold text-red-500">You Died. Again.</h2>
-      <p className="text-zinc-300 text-lg">Death #{deaths}</p>
-      {roast && (
-        <div className="bg-zinc-900 border border-zinc-700 rounded-lg p-4 max-w-md">
-          <p className="text-xs text-zinc-500 mb-1">AI Assessment:</p>
-          <p className="text-amber-300 italic">&ldquo;{roast}&rdquo;</p>
+    <div className="relative flex flex-col items-center justify-center h-screen gap-5 text-center px-4 bg-black overflow-hidden">
+      <GameAmbience />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#2a0000_0%,_#000_60%)]" />
+      <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(255,0,0,0.02)_2px,rgba(255,0,0,0.02)_4px)]" />
+
+      <div className="relative z-10 flex flex-col items-center gap-5 w-full max-w-lg">
+        <div>
+          <p className="text-zinc-600 text-xs tracking-[0.4em] uppercase mb-1">System Error</p>
+          <h2 className="text-4xl font-black text-red-500 drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]">
+            You Died.
+          </h2>
+          <p className="text-zinc-600 text-sm mt-1">Death #{deaths} — still not surprised</p>
         </div>
-      )}
-      {rank > 0 && <p className="text-zinc-500 text-sm">You are ranked <span className="text-white font-bold">#{rank}</span> most pathetic globally.</p>}
-      <div className="flex gap-3 flex-wrap justify-center mt-2">
-        <button onClick={() => startRun(physicsRef.current)} className="px-6 py-2 bg-amber-500 hover:bg-amber-400 text-black font-bold rounded-lg transition-colors">
-          Try Again (Don&apos;t)
-        </button>
-        <button onClick={() => setShowShare(true)} className="px-6 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg transition-colors text-sm">
-          Share Your Shame
-        </button>
-        {deaths >= 5 && (
-          <button onClick={() => setScreen("support")} className="px-6 py-2 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 text-zinc-400 rounded-lg transition-colors text-sm">
-            Report a Bug
-          </button>
+
+        {roast && (
+          <div className="w-full bg-black border border-red-900/50 p-4 text-left shadow-[0_0_30px_rgba(239,68,68,0.1)]">
+            <p className="text-red-900 text-xs tracking-widest uppercase mb-2">// AI Assessment</p>
+            <p className="text-amber-300/90 italic text-sm leading-relaxed">&ldquo;{roast}&rdquo;</p>
+          </div>
         )}
+
+        {rank > 0 && (
+          <p className="text-zinc-600 text-xs tracking-wide">
+            Global rank: <span className="text-white font-bold">#{rank} most pathetic</span>
+          </p>
+        )}
+
+        <div className="flex gap-3 flex-wrap justify-center mt-1">
+          <button onClick={() => startRun(physicsRef.current)}
+            className="px-6 py-2 bg-amber-500 hover:bg-amber-400 active:scale-95 text-black font-black tracking-widest uppercase text-sm transition-all shadow-[0_0_20px_rgba(251,191,36,0.2)]">
+            Try Again
+          </button>
+          <button onClick={() => setShowShare(true)}
+            className="px-6 py-2 border border-zinc-700 hover:border-zinc-500 text-zinc-400 hover:text-zinc-200 text-sm tracking-wide transition-all">
+            Share Shame
+          </button>
+          {deaths >= 5 && (
+            <button onClick={() => setScreen("support")}
+              className="px-6 py-2 border border-red-900/40 hover:border-red-700/60 text-red-900 hover:text-red-700 text-sm tracking-wide transition-all">
+              Report a Bug
+            </button>
+          )}
+        </div>
+        <button onClick={() => setShowPatchNotes(true)} className="text-xs text-zinc-800 hover:text-zinc-600 tracking-widest uppercase mt-1">
+          v2.4.1 patch notes
+        </button>
       </div>
-      <button onClick={() => setShowPatchNotes(true)} className="text-xs text-zinc-700 hover:text-zinc-500 underline mt-2">v2.4.1 patch notes</button>
       {showPatchNotes && <PatchNotesModal onClose={() => setShowPatchNotes(false)} />}
       {showShare && <ShareModal deaths={deaths} roast={roast} onClose={() => setShowShare(false)} />}
     </div>
   );
 
   if (screen === "support") return (
-    <div className="flex flex-col items-center justify-center h-screen gap-4 text-center px-4">
-      <h2 className="text-2xl font-bold text-zinc-300">Report a Bug</h2>
-      <p className="text-zinc-500 text-sm">Your feedback is important to us. (It is not.)</p>
-      {!supportResponse ? (
-        <>
-          <textarea
-            className="w-full max-w-md h-32 bg-zinc-900 border border-zinc-700 rounded-lg p-3 text-zinc-300 text-sm resize-none focus:outline-none focus:border-zinc-500"
-            placeholder="Describe the issue... (the issue is you)"
-            value={supportMsg}
-            onChange={(e) => setSupportMsg(e.target.value)}
-          />
-          <div className="flex gap-3">
-            <button onClick={handleSupportSubmit} disabled={!supportMsg || supportLoading}
-              className="px-6 py-2 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-black font-bold rounded-lg transition-colors">
-              {supportLoading ? "Brewing response..." : "Submit"}
+    <div className="relative flex flex-col items-center justify-center h-screen gap-5 text-center px-4 bg-black overflow-hidden">
+      <GameAmbience />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#0a0a1a_0%,_#000_70%)]" />
+      <div className="relative z-10 flex flex-col items-center gap-4 w-full max-w-md">
+        <div>
+          <p className="text-zinc-700 text-xs tracking-[0.4em] uppercase mb-1">Support Portal</p>
+          <h2 className="text-2xl font-black text-zinc-300">Report a Bug</h2>
+          <p className="text-zinc-700 text-xs mt-1">Your feedback is important to us. (It is not.)</p>
+        </div>
+        {!supportResponse ? (
+          <>
+            <textarea
+              className="w-full h-32 bg-zinc-950 border border-zinc-800 focus:border-zinc-600 p-3 text-zinc-300 text-sm resize-none focus:outline-none font-mono"
+              placeholder="// describe the issue... (the issue is you)"
+              value={supportMsg}
+              onChange={(e) => setSupportMsg(e.target.value)}
+            />
+            <div className="flex gap-3">
+              <button onClick={handleSupportSubmit} disabled={!supportMsg || supportLoading}
+                className="px-6 py-2 bg-amber-500 hover:bg-amber-400 disabled:opacity-30 text-black font-black tracking-widest uppercase text-sm transition-all">
+                {supportLoading ? "Brewing..." : "Submit"}
+              </button>
+              <button onClick={() => setScreen("dead")}
+                className="px-6 py-2 border border-zinc-800 hover:border-zinc-600 text-zinc-600 hover:text-zinc-400 text-sm transition-all">
+                Cancel
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="w-full bg-black border border-red-900/40 p-4 text-left shadow-[0_0_20px_rgba(239,68,68,0.05)]">
+              <p className="text-red-900 text-xs tracking-widest uppercase mb-2">HTTP 418 — I&apos;m a Teapot</p>
+              <p className="text-zinc-400 text-sm italic leading-relaxed">{supportResponse}</p>
+            </div>
+            <button onClick={() => { setSupportResponse(""); setSupportMsg(""); setScreen("dead"); }}
+              className="px-6 py-2 border border-zinc-800 hover:border-zinc-600 text-zinc-600 hover:text-zinc-400 text-sm transition-all">
+              Back
             </button>
-            <button onClick={() => setScreen("dead")} className="px-6 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 rounded-lg transition-colors">Cancel</button>
-          </div>
-        </>
-      ) : (
-        <>
-          <div className="bg-zinc-900 border border-red-900 rounded-lg p-4 max-w-md text-left">
-            <p className="text-xs text-red-500 mb-1">HTTP 418 — I&apos;m a Teapot</p>
-            <p className="text-zinc-300 text-sm italic">{supportResponse}</p>
-          </div>
-          <button onClick={() => { setSupportResponse(""); setSupportMsg(""); setScreen("dead"); }}
-            className="px-6 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 rounded-lg transition-colors">Back</button>
-        </>
-      )}
+          </>
+        )}
+      </div>
     </div>
   );
 
