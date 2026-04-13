@@ -121,6 +121,12 @@ export default function Game() {
         height: 580,
         backgroundColor: "#1a0a2e",
         parent: containerRef.current!,
+        scale: {
+          mode: Phaser.Scale.FIT,
+          autoCenter: Phaser.Scale.CENTER_BOTH,
+          width: 800,
+          height: 580,
+        },
         physics: { default: "arcade", arcade: { gravity: { x: 0, y: 0 }, debug: false } },
         scene,
       });
@@ -226,13 +232,13 @@ export default function Game() {
   );
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
+    <div className="flex flex-col items-center justify-center h-screen w-screen overflow-hidden">
       <div className="mb-2 flex gap-6 text-sm text-zinc-500">
         <span>Deaths: <span className="text-white">{deaths}</span></span>
         <span>Jump: <span className="text-amber-400 font-mono">{getJumpKeyName(Math.max(0, runIndexRef.current - 1))}</span></span>
         <span>Slam: <span className="text-amber-400 font-mono">{getSlamKeyName(Math.max(0, runIndexRef.current - 1))}</span></span>
       </div>
-      <div ref={containerRef} className="rounded-lg overflow-hidden border border-zinc-800" />
+      <div ref={containerRef} className="w-full flex-1" />
     </div>
   );
 }

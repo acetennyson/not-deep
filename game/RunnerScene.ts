@@ -123,6 +123,38 @@ export class RunnerScene extends Phaser.Scene {
     });
 
     this.bindKeys();
+    this.createMobileButtons();
+  }
+
+  private createMobileButtons() {
+    const jumpKeyCode = JUMP_KEY_ROTATION[(this.runIndex + 1) % JUMP_KEY_ROTATION.length];
+    const isJumpRight = jumpKeyCode !== Phaser.Input.Keyboard.KeyCodes.DOWN;
+
+    // left button
+    const leftLabel = isJumpRight ? "SLAM" : "JUMP";
+    const leftAction = isJumpRight ? () => this.handleSlam() : () => this.handleJump();
+
+    // right button
+    const rightLabel = isJumpRight ? "JUMP" : "SLAM";
+    const rightAction = isJumpRight ? () => this.handleJump() : () => this.handleSlam();
+
+    this.makeMobileBtn(0, H - 80, 160, 80, leftLabel, leftAction);
+    this.makeMobileBtn(W - 160, H - 80, 160, 80, rightLabel, rightAction);
+  }
+
+  private makeMobileBtn(x: number, y: number, w: number, h: number, label: string, action: () => void) {
+    const gfx = this.add.graphics();
+    gfx.fillStyle(0xffffff, 0.08);
+    gfx.fillRoundedRect(x + 4, y + 4, w - 8, h - 8, 12);
+    gfx.lineStyle(1, 0xffffff, 0.2);
+    gfx.strokeRoundedRect(x + 4, y + 4, w - 8, h - 8, 12);
+
+    this.add.text(x + w / 2, y + h / 2, label, {
+      fontSize: "14px", color: "#ffffff88",
+    }).setOrigin(0.5).setDepth(10);
+
+    const zone = this.add.zone(x, y, w, h).setOrigin(0).setInteractive();
+    zone.on("pointerdown", () => { if (!this.dead) action(); });
   }
 
   private bindKeys() {

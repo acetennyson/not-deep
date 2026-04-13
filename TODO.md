@@ -47,5 +47,5 @@
 
 ## Deployment
 - [x] Dockerfile
-- [ ] Deploy to Google Cloud Run
+- [ ] Deploy to Google Cloud Run — *blocked: Google Cloud Run requires upgrading to the Blaze (pay-as-you-go) plan which requires a valid billing card. Unable to proceed without one. Dockerfile is production-ready and the deploy command is documented in the README. Demo deployed to Vercel as a substitute.*
 - [ ] Set environment variables on Cloud Run

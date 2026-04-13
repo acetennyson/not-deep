@@ -37,7 +37,7 @@ export async function updateSession(
   totalSurvivedMs: number
 ): Promise<number> {
   try {
-    const ref = doc(db, "sessions", sessionId);
+    const ref = doc(db, "TC.sessions", sessionId);
     const existing = await getDoc(ref);
     const minutesPlayed = Math.max(0.1, totalSurvivedMs / 60000);
     const deathRate = deathCount / minutesPlayed;
@@ -52,7 +52,7 @@ export async function updateSession(
 
     // rank = sessions with higher deathRate than this one + 1
     const worse = await getCountFromServer(
-      query(collection(db, "sessions"), where("deathRate", ">", deathRate))
+      query(collection(db, "TC.sessions"), where("deathRate", ">", deathRate))
     );
     return worse.data().count + 1;
   } catch {
