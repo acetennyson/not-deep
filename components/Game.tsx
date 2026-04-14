@@ -32,7 +32,7 @@ function saveSurvivedMs(n: number) {
   localStorage.setItem("teapot_survived_ms", String(n));
 }
 
-type Screen = "start" | "loading" | "playing" | "dead" | "support";
+type Screen = "start" | "loading" | "playing" | "dead" | "analyzing" | "support";
 
 export default function Game() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -84,6 +84,7 @@ export default function Game() {
       totalSurvivedMsRef.current += survivedMs;
       saveSurvivedMs(totalSurvivedMsRef.current);
       setDeaths(newDeaths);
+      setScreen("analyzing");
 
       const [judgeRes, playerRank] = await Promise.all([
         judgePlayer({ deaths: newDeaths, avgJumps: d?.jumps ?? 0, wallHugs: d?.wallHugs ?? 0, keyMashCount: d?.keyMashCount ?? 0 }),
@@ -203,6 +204,23 @@ export default function Game() {
         <div className="text-5xl animate-spin drop-shadow-[0_0_20px_rgba(251,191,36,0.5)]">☕</div>
         <p className="text-zinc-600 text-xs tracking-widest uppercase">Preparing your failure</p>
         <p className="text-zinc-500 text-sm max-w-xs italic border border-zinc-800 px-4 py-3 bg-zinc-900/50">{tip}</p>
+      </div>
+    </div>
+  );
+
+  if (screen === "analyzing") return (
+    <div className="relative flex flex-col items-center justify-center h-screen gap-5 text-center px-4 bg-black overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_#1a0000_0%,_#000_60%)]" />
+      <GameAmbience />
+      <div className="relative z-10 flex flex-col items-center gap-4">
+        <div className="text-4xl">☕</div>
+        <p className="text-red-900 text-xs tracking-[0.4em] uppercase">Analyzing your failure</p>
+        <div className="flex gap-1 mt-1">
+          {[0,1,2].map(i => (
+            <div key={i} className="w-2 h-2 bg-red-800 rounded-full animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+          ))}
+        </div>
+        <p className="text-zinc-700 text-xs max-w-xs mt-2 italic">The AI is reviewing your performance.<br/>This will not be pleasant.</p>
       </div>
     </div>
   );
