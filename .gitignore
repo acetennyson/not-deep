@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+*.fb.post
 
 # debug
 npm-debug.log*
